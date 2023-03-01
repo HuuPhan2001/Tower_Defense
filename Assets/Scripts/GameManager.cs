@@ -47,6 +47,7 @@ public class GameManager : Singleton<GameManager>
 	private AudioSource audioSource;
 
 	public List<Enemy> EnemyList = new List<Enemy>();
+
 	/*    private int enemiesOnScreen = 0;*/
 	const float spawDelay = 1f;
 
@@ -218,7 +219,7 @@ public class GameManager : Singleton<GameManager>
 				totalEnemies += waveNumber;
 				break;
 			default:
-				totalEnemies = 10;
+				totalEnemies = 3;
 				TotalEscaped = 0;
 				waveNumber = 0;
 				TotalMoney = 10;

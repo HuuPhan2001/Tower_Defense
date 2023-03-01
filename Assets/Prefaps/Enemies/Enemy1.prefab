@@ -181,3 +181,5 @@ MonoBehaviour:
   navigationUpdate: 0.01
   healthPoints: 200
   rewardAmt: 10
+  heathBar: {fileID: 0}
+  health: 200

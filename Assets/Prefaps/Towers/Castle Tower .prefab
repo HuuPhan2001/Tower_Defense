@@ -97,6 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a096a7a67816cb4fb7287e8c4893b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeBetweenAttacks: 0.3
+  timeBetweenAttacks: 0.5
   attackRadius: 3
+  price: 10
   projecttile: {fileID: 4139781432937206345, guid: ea548057bc3efea42834e10dc9f38b6f, type: 3}

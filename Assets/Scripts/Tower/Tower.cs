@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Build.Reporting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Tower : MonoBehaviour
 {
@@ -9,11 +11,16 @@ public class Tower : MonoBehaviour
 	[SerializeField]
 	private float attackRadius;
 	[SerializeField]
+	private int price;
+	[SerializeField]
 	private Projectile projecttile;
+	//[SerializeField]
+	//private Button sellButton;
 	private Enemy targetEnemy = null;
 	private float attackCounter;
 	private bool isAttacking = false;
 	private AudioSource audioSource;
+	public int Price { get => price;}
 	// Start is called before the first frame update
 	void Start()
 	{
@@ -51,6 +58,14 @@ public class Tower : MonoBehaviour
 		}
 	}
 
+	//public void enableSell()
+	//{
+	//	sellButton.gameObject.SetActive(true);
+	//}
+	//public void disableSell()
+	//{
+	//	sellButton.gameObject.SetActive(false);
+	//}
 	void FixedUpdate()
 	{
 		if (isAttacking)

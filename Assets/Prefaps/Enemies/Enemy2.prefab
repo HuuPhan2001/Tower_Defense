@@ -181,3 +181,4 @@ MonoBehaviour:
   navigationUpdate: 0.01
   healthPoints: 100
   rewardAmt: 5
+  heathP: {fileID: 8667789069766198814, guid: 7d4efa883913a484098a16ac9d8f049c, type: 3}
