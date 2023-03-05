@@ -222,7 +222,7 @@ public class GameManager : Singleton<GameManager>
 				totalEnemies = 3;
 				TotalEscaped = 0;
 				waveNumber = 0;
-				TotalMoney = 10;
+				TotalMoney = 1000;
 				enemiesToSpawn = 0;
 				TowerManager.Instance.DestoyAllTower();
 				TowerManager.Instance.RenameTagsBuildSites();

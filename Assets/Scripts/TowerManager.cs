@@ -18,10 +18,8 @@ public class TowerManager : Singleton<TowerManager>
 	private List<Tower> towerList = new List<Tower>();
 	private List<Collider2D> BuildList = new List<Collider2D>();
 	private Collider2D buildTitle;
-	private Collider2D site;
-	private Vector3 position;
 	private Tower town;
-	private static Vector3 bg1 = new Vector3((float)-7.66, (float)2.04, 0);
+	private static Vector3 bg1;
 	//private Collider2D site;
 	// Start is called before the first frame update
 	void Start()
@@ -44,9 +42,6 @@ public class TowerManager : Singleton<TowerManager>
 		{
 			Vector2 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
-			position = hit.transform.position;
-			site = hit.collider;
-			site.tag = hit.collider.tag;
 			if (hit.collider.tag == "buildSite")
 			{
 				Debug.Log("build " + hit.transform.position);
@@ -55,9 +50,8 @@ public class TowerManager : Singleton<TowerManager>
 				buildTitle.tag = "buildSiteFull";
 				RegisterBuildSite(buildTitle);
 				placeTower(hit);// hàm đặt trụ
+				sellButton.gameObject.SetActive(false);
 			}
-			town = findTower(hit.transform.position);
-			Debug.Log("check null: "+town);
 			//if (hit.transform.position == bg1)
 			//{
 			//	sellButton.gameObject.SetActive(true);
@@ -75,18 +69,35 @@ public class TowerManager : Singleton<TowerManager>
 			//}
 			if (hit.collider.tag == "buildSiteFull")
 			{
-				
-				if (town == null)
+				town = findTower(hit.transform.position);
+				getTower(town);
+				Debug.Log("check active: " + town);
+
+				if (town.isActiveAndEnabled == false)
 				{
-					Debug.Log("null");
-					buildTitle = hit.collider;
-					hit.collider.tag = "buildSite";
+					UnRegisterTower(hit.transform);
+					placeTower(hit);
+
 
 				}
 				else
 				{
+					Debug.Log("check town active: " + town);
 					sellButton.gameObject.SetActive(true);
+					bg1 = hit.transform.position;
+					getPos(bg1);
+					//if ((colliders = Physics.OverlapSphere(bg1, 1f)).Length > 1)
+					//{
+					//	foreach (var collider in colliders)
+					//	{
+					//		var gameObjects = Physics.OverlapSphere(bg1, 1).Except(new[] { collider }).Select(x => x.gameObject).ToArray();
+					//	}
 
+					//}
+					//for (var go : GameObject in gameObjects)
+					//{
+
+					//}
 					Debug.Log("full " + hit.transform.position);
 					Debug.Log(towerList.Count);
 
@@ -106,23 +117,37 @@ public class TowerManager : Singleton<TowerManager>
 	{
 		return pos;
 	}
+	public Tower getTower(Tower tower)
+	{
+		return tower;
+	}
 	public void sellBtnPressed()
 	{
-		Debug.Log(bg1);
 		Vector3 pos = getPos(bg1);
-		Tower tow = findTower(pos);
-		Debug.Log("check : " +tow);
+		//Tower tow = findTower(pos);
+		//Debug.Log("check : " + tow);
+		//Debug.Log("town List " + towerList.Select(x=>x.transform.position.normalized).ToString());
+		GameObject[] gos = GameObject.FindGameObjectsWithTag("tower");
+		var target = gos.OrderBy(go => (go.transform.position).sqrMagnitude == bg1.sqrMagnitude).First();
+		Tower tow = getTower(town);
+		target.gameObject.SetActiveRecursively(false);
+		Debug.Log("check tow: " + tow);
+		Debug.Log("check town: " + town);
 		//Debug.Log("check money: " + tow.Price);
 		//GameManager.Instance.addMoney(tow.Price - tow.Price * 40 / 100);
-		UnRegisterTower(tow);
-		
-		sellButton.gameObject.SetActive(false);
+		//UnRegisterTower((Tower)target);
+
+		//sellButton.gameObject.SetActive(false);
 		//town.disableSell();
 
 	}
 	public Tower findTower(Vector3 pos)
 	{
-		return towerList.FirstOrDefault(x => x.transform.position == pos);
+		if (towerList.Count == 0)
+		{
+			return null;
+		}
+		return (Tower)towerList.OrderBy(x => (x.transform.position).sqrMagnitude == pos.sqrMagnitude).First();
 	}
 
 	public void RegisterBuildSite(Collider2D buildTag)
@@ -138,10 +163,33 @@ public class TowerManager : Singleton<TowerManager>
 	{
 		towerList.Add(tower);
 	}
-	public void UnRegisterTower(Tower tower)
+	public void UnRegisterTower(Transform transforms)
 	{
-		Destroy(tower.gameObject);
-		towerList.Remove(tower);
+		//Debug.Log(tower.transform.position);
+		Tower town = (Tower)towerList.OrderBy(x=>x.transform.position.sqrMagnitude == transform.position.sqrMagnitude).First();
+		if (town != null)
+		{
+			Destroy(town.gameObject);
+			GameManager.Instance.addMoney(town.Price - town.Price * 40 / 100);
+			towerList.Remove(town);
+		}
+		else
+		{
+			return;
+		}
+
+		//GameObject gOb = FindObjectOfType<Tower>().transform.position == pos;
+		//foreach (Tower town in towerList)
+		//{
+		//	if(town.transform.position == tower.transform.position)
+		//	{
+		//		Destroy(town);
+		//		towerList.Remove(town);
+		//		break;
+		//	}
+		//}
+		//Destroy(tower.gameObject);
+		//towerList.Remove(tower);
 	}
 	public void RenameTagsBuildSites()
 	{
@@ -164,7 +212,7 @@ public class TowerManager : Singleton<TowerManager>
 	{
 		if (!EventSystem.current.IsPointerOverGameObject() && towerBtnPressed != null)
 		{
-			Tower newTower = Instantiate(towerBtnPressed.TowerObject);
+			Tower newTower = Instantiate(towerBtnPressed.TowerObject) as Tower;
 			newTower.transform.position = hit.transform.position;
 			//newTower.disableSell();
 			sellButton.onClick.AddListener(() => sellBtnPressed());
